@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+	<html lang="en">
+	<head>
+	    <meta charset="UTF-8">
+	    <title>Title</title>
+	</head>
+
+	<body onload="initiate_list()">
+
+	<script>
+	
+	var todos = [];
+	var trashImg = '<img src="https://cdn4.iconfinder.com/data/icons/eldorado-navigation/40/trash_1-512.png" onclick="handle_change_of_task(this)" alt="Delete Task" height="30" width="30" align="right" hspace="10">'
+	var editImg  = '<img src="https://cdn2.iconfinder.com/data/icons/humano2/128x128/actions/document-edit.png" onclick="handle_change_of_task(this)" alt="Edit Task" height="30" width="30" align="right" hspace="10">'
+	var completeimg = '<img src = "https://upload.wikimedia.org/wikipedia/commons/thumb/0/03/Green_check.svg/2000px-Green_check.svg.png" onclick = handle_change_of_task(this)" alt = "Complete Task" height="30" width="30" align="right" hspace="10">'
+
+        let myHeaders = new Headers();
+        myHeaders.append('Accept', 'application/json'); // This one is enough for GET requests
+        myHeaders.append('Content-Type', 'application/json'); // This one sends body
+
+	//////////////////////////////////////////////////////////////////////////////////////////
+	function initiate_list() {
+	
+	   var ul = document.getElementById('myList')
+	   
+	   var listItem = document.createElement("li");
+	   listItem.innerHTML=listItem.innerHTML + "Do Homework" + trashImg + editImg + completeimg
+	   ///listItem.onclick = function (){alert('Do something if you want to..');};
+	   ul.appendChild(listItem);
+	   
+	   var listItem = document.createElement("li");
+	   listItem.innerHTML=listItem.innerHTML + "Buy Milk" + trashImg + editImg + completeimg
+	   ///listItem.onclick = function (){alert('Do something if you want to..');};
+	   ul.appendChild(listItem);
+	   
+	   var listItem = document.createElement("li");
+	   listItem.innerHTML=listItem.innerHTML + "Charge Phone" + trashImg + editImg + completeimg
+	   ///listItem.onclick = function (){alert('Do something if you want to..');};
+	   ul.appendChild(listItem);
+	   
+	   var listItem = document.createElement("li");
+	   listItem.innerHTML=listItem.innerHTML + "Clean Room" + trashImg + editImg + completeimg
+	   ///listItem.onclick = function (){alert('Do something if you want to..');};
+	   ul.appendChild(listItem);
+	
+	}
+	//////////////////////////////////////////////////////////////////////////////////////////
+	function new_task() {
+	
+	 var taskDescription = document.getElementById("myInput").value;
+	
+	 if (taskDescription.length > 0) {
+	   var ul = document.getElementById('myList')
+	   var listItem = document.createElement("li");
+	   listItem.innerHTML=listItem.innerHTML + taskDescription + trashImg + editImg + completeimg
+	   ul.appendChild(listItem);
+	   document.getElementById("myInput").value = ""; 
+	 }  
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////////////
+	function handle_change_of_task(img) {
+	
+	 var imgalt = img.alt;
+	 var listItem = img.parentNode;
+         var ul = listItem.parentNode;
+
+         var str = listItem.innerHTML;
+	 var cleanTaskItem = str.substr(0, str.indexOf('<'));
+     
+         //alert(imgalt);
+	 if (imgalt == "Delete Task") {
+       if (confirm("Are you sure you want to delete the Task?")) {
+		 console.log("Delete task item");    
+         ///Remove the parent li item
+         ul.removeChild(listItem);
+
+         fetch('http://127.0.0.1:5000/todo/delete', {
+                method: 'POST',
+                mode: 'no-cors',
+                credentials: 'include',
+                redirect: 'follow',
+                header: myHeaders,
+		body: JSON.stringify({taskitem: cleanTaskItem})
+         })
+         .then(function(res) { return res.json(); })
+         .then(function(data) { alert( JSON.stringify(data))})
+      
+          ///console.log(cleanTaskItem)
+
+       } 
+	 }
+	 else if (imgalt == "Edit Task") {
+	   console.log("Update task item");
+	   var x;
+           var newTaskDescription=prompt("Please Enter Your New Task Description","");
+	      if (newTaskDescription && newTaskDescription.length > 0) {
+                listItem.innerHTML = newTaskDescription + trashImg + editImg
+
+                fetch('http://127.0.0.1:5000/todo/update', {
+                   method: 'POST',
+                   mode: 'no-cors',
+                   credentials: 'include',
+                   redirect: 'follow',
+                   header: myHeaders,
+	           body: JSON.stringify({oldtaskitem: cleanTaskItem, newtaskitem: newTaskDescription})
+           })
+           .then(function(res) { return res.json(); })
+           .then(function(data) { alert( JSON.stringify(data))})
+        }
+     }
+     else if (imgalt == "Complete Task") {
+	   console.log("Complete task item");
+	   if (confirm("Are you sure you want to delete the Task?")) {
+	   //// need to mark it visually
+	   }
+     }
+	}
+	//////////////////////////////////////////////////////////////////////////////////////////
+	
+</script>	
+
+	<div id="myDIV" class = "header">
+	    <h1>To Do List</h1>
+	    <input type="text" id="myInput" placeholder="Enter Task Description">
+	    <button onclick="new_task()">Add Task</button>
+	</div>
+	
+	<ol id="myList" type="1">
+	</ol>
+	
+	</body>
+	</html>
+	
+
+	<!DOCTYPE html>
+	<html>
+	<head>
+	    <meta charset="UTF-8">
+	    <title>Title</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<style>
+	<body>
+	
+	body {
+	  margin: 0;
+	  min-width: 250px;
+	}
+	
+	/* Style Header */
+	h1 {
+	  font-size: 60px;
+	  font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
+	  font-style: Bold;
+	}
+	
+	/* Style list items */
+	ol li {
+		cursor: pointer;
+	    position: relative;
+	    padding: 10px 10px 10px 50px;
+	    background: #d5d9e5;
+	    font-size: 20px;
+	    font-family: "Trebuchet MS", Helvetica, sans-serif
+	    
+	}
+	
+	/* Different colors every 2 list items */
+	ol li:nth-child(odd) {
+	    background: #f2efef;
+	}
+	
+	/* Hovering color */
+	ol li:hover {
+	    background: #bfbfbf;
+	}
+	
+	/* Header */
+	.header {
+	    background-color: #001391;
+	    padding: 30px 40px;
+	    color: white;
+	    text-align: center;
+	}
+	
+	</style>
+	
