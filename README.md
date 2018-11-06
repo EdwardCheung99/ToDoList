@@ -51,21 +51,14 @@ Instructions on how to use the application are linked to the top of the front en
 
 
 
-  All other files were used for testing purposes.
 
-
-
-## Built and Deployed With
+## Built With
 
  * Recent HTML / CSS / JavaScript ( Successfully tested on Chrome, Safari, Mozilla, IE )
 
  * Flask   [ Ver.0.12.2 ] - Micro-framework for Python - Flask, request, json, jsonify libraries 
 
  * Python  [ Ver.2.7.12 ] - Programming Language
-
- * NGINX   [ Ver.1.12.2-0 ] - Web Server
-
- * uWSGI   [ Ver.2.0.17 ] - Interfaces / Utilities for Hosting Services
 
  * MySQL   [ Ver.5.7 ] - Relational Database Management System
 
